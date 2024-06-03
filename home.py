@@ -1,3 +1,3 @@
 import streamlit as st
 
-st.title('Churn Calculator')
+st.title('Churn Predictor App')
