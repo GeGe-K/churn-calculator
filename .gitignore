@@ -50,6 +50,8 @@ coverage.xml
 .hypothesis/
 .pytest_cache/
 cover/
+venv_streamlit
+.venv
 
 # Translations
 *.mo
@@ -129,6 +131,9 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+/venv_streamlit
+.venv_streamlit
+venv_streamlit/
 
 # Spyder project settings
 .spyderproject
