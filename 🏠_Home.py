@@ -49,7 +49,7 @@ with col2:
  
     # Need help section
     st.subheader("Need Help?")
-    st.write("For collaborations, contact me at ongomaelias2@gmail.com")
+    st.write("For collaborations, contact me at gloriagivondo@gmail.com")
  
     # Repository on Github button
     st.markdown(
@@ -69,8 +69,16 @@ with col2:
             border-radius: 5px;
         }
         .button:hover {background-color: #45a049}
+
+        a:hover { 
+            text-decoration: none; 
+        } 
+
+        a:active { 
+            text-decoration: none; 
+        }
         </style>
-        <a href="https://github.com/OngomaElias/Customer_Churn-Prediction" class="button">Repository on Github</a>
+        <a href="https://github.com/GeGe-K/churn-predictor-app.git" class="button">Repository on Github</a>
         """,
         unsafe_allow_html=True
     )
