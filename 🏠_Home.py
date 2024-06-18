@@ -1,4 +1,14 @@
 import streamlit as st
+import pyrebase
+
+# Import Firebase config
+from firebase_config import firebaseConfig
+
+# Initialize Firebase
+firebase = pyrebase.initialize_app(firebaseConfig)
+auth = firebase.auth()
+db = firebase.database()
+
 
 st.set_page_config(
     page_title='Home Page',
