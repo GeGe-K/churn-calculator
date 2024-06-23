@@ -1,14 +1,5 @@
 import streamlit as st
-import pyrebase
-
-# Import Firebase config
-from firebase_config import firebaseConfig
-
-# Initialize Firebase
-firebase = pyrebase.initialize_app(firebaseConfig)
-auth = firebase.auth()
-db = firebase.database()
-
+from auth_functions import create_account, login,send_verification_email, verify_account
 
 st.set_page_config(
     page_title='Home Page',
@@ -92,106 +83,106 @@ with col2:
         """,
         unsafe_allow_html=True
     )
- 
- 
 
-# Placeholder for storing user data and login history (replace with your actual database or storage mechanism)
-user_data = []
-login_history = []
+def main():
+    st.sidebar.title()
+ # Placeholder for storing user data and login history (replace with your actual database or storage mechanism)
+# user_data = []
+# login_history = []
  
-# Initialize session state and set logged_in to True by default
-if 'logged_in' not in st.session_state:
-    st.session_state.logged_in = True  # Set to True by default to allow access
-if 'creating_account' not in st.session_state:
-    st.session_state.creating_account = False
+# # Initialize session state and set logged_in to True by default
+# if 'logged_in' not in st.session_state:
+#     st.session_state.logged_in = True  # Set to True by default to allow access
+# if 'creating_account' not in st.session_state:
+#     st.session_state.creating_account = False
  
-def login_form():
-    """
-    Creates a login form with username and password fields.
-    """
-    with st.sidebar:
-        st.header("Login")
-        if not st.session_state.creating_account:
-            username = st.text_input("Username:", key="login_username")
-            password = st.text_input("Password:", type="password", key="login_password")  # Password field hides the characters
-            login_button = st.button("Login")
+# def login_form():
+#     """
+#     Creates a login form with username and password fields.
+#     """
+#     with st.sidebar:
+#         st.header("Login")
+#         if not st.session_state.creating_account:
+#             username = st.text_input("Username:", key="login_username")
+#             password = st.text_input("Password:", type="password", key="login_password")  # Password field hides the characters
+#             login_button = st.button("Login")
  
-            if login_button:
-                # Add logic to handle login button click based on your authentication method
-                if authenticate_user(username, password):
-                    st.session_state.logged_in = True
-                    st.success("Login successful!")
-                    login_history.append({"username": username, "status": "Success"})
-                    st.experimental_rerun()  # Refresh the page to reflect the login status
-                else:
-                    st.error("Invalid username or password.")
-                    login_history.append({"username": username, "status": "Failed"})
+#             if login_button:
+#                 # Add logic to handle login button click based on your authentication method
+#                 if authenticate_user(username, password):
+#                     st.session_state.logged_in = True
+#                     st.success("Login successful!")
+#                     login_history.append({"username": username, "status": "Success"})
+#                     st.experimental_rerun()  # Refresh the page to reflect the login status
+#                 else:
+#                     st.error("Invalid username or password.")
+#                     login_history.append({"username": username, "status": "Failed"})
  
-            create_account_button = st.button("Create new account")
+#             create_account_button = st.button("Create new account")
  
-            if create_account_button:
-                st.session_state.creating_account = True
+#             if create_account_button:
+#                 st.session_state.creating_account = True
  
-        else:
-            st.subheader("Create New Account")
-            new_username = st.text_input("Username:", key="new_username")
-            new_email = st.text_input("Email:", key="new_email")
-            new_phone_number = st.text_input("Phone Number:", key="new_phone_number")
-            new_password = st.text_input("Password:", type="password", key="new_password")
-            confirm_password = st.text_input("Confirm Password:", type="password", key="confirm_password")
-            submit_button = st.button("Submit", key="submit_button")
-            cancel_button = st.button("Cancel", key="cancel_button")
+#         else:
+#             st.subheader("Create New Account")
+#             new_username = st.text_input("Username:", key="new_username")
+#             new_email = st.text_input("Email:", key="new_email")
+#             new_phone_number = st.text_input("Phone Number:", key="new_phone_number")
+#             new_password = st.text_input("Password:", type="password", key="new_password")
+#             confirm_password = st.text_input("Confirm Password:", type="password", key="confirm_password")
+#             submit_button = st.button("Submit", key="submit_button")
+#             cancel_button = st.button("Cancel", key="cancel_button")
  
-            if submit_button:
-                # Validate form data (e.g., check for empty fields, password match)
-                if new_username and new_email and new_phone_number and new_password and new_password == confirm_password:
-                    # Add logic to store new user data securely (replace with your actual storage mechanism)
-                    hashed_password = hash_password(new_password)
-                    user_data.append({
-                        "username": new_username,
-                        "email": new_email,
-                        "phone_number": new_phone_number,
-                        "password": hashed_password
-                    })
-                    st.success("Account created successfully! Please log in.")
-                    st.session_state.creating_account = False
-                    st.experimental_rerun()
-                else:
-                    st.error("Please fill out all fields and ensure passwords match.")
+#             if submit_button:
+#                 # Validate form data (e.g., check for empty fields, password match)
+#                 if new_username and new_email and new_phone_number and new_password and new_password == confirm_password:
+#                     # Add logic to store new user data securely (replace with your actual storage mechanism)
+#                     hashed_password = hash_password(new_password)
+#                     user_data.append({
+#                         "username": new_username,
+#                         "email": new_email,
+#                         "phone_number": new_phone_number,
+#                         "password": hashed_password
+#                     })
+#                     st.success("Account created successfully! Please log in.")
+#                     st.session_state.creating_account = False
+#                     st.experimental_rerun()
+#                 else:
+#                     st.error("Please fill out all fields and ensure passwords match.")
  
-            if cancel_button:
-                st.session_state.creating_account = False
-                st.experimental_rerun()
+#             if cancel_button:
+#                 st.session_state.creating_account = False
+#                 st.experimental_rerun()
  
-def authenticate_user(username, password):
-    """
-    Authenticates the user based on the provided username and password.
-    """
-    hashed_password = hash_password(password)  # Hash the entered password
-    for user in user_data:
-        if user["username"] == username and user["password"] == hashed_password:
-            return True
-    return False
+# def authenticate_user(username, password):
+#     """
+#     Authenticates the user based on the provided username and password.
+#     """
+#     hashed_password = hash_password(password)  # Hash the entered password
+#     for user in user_data:
+#         if user["username"] == username and user["password"] == hashed_password:
+#             return True
+#     return False
  
-def hash_password(password):
-    """
-    Hashes the provided password using a secure hashing algorithm.
-    """
-    hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
-    return hashed_password
+# def hash_password(password):
+#     """
+#     Hashes the provided password using a secure hashing algorithm.
+#     """
+#     hashed_password = hashlib.sha256(password.encode('utf-8')).hexdigest()
+#     return hashed_password
  
-def show_history():
-    """
-    Displays the login history.
-    """
-    st.title("Login History")
-    st.write("This is the login history page. Only accessible after login.")
+# def show_history():
+#     """
+#     Displays the login history.
+#     """
+#     st.title("Login History")
+#     st.write("This is the login history page. Only accessible after login.")
    
-    if login_history:
-        for record in login_history:
-            st.write(f"Username: {record['username']}, Status: {record['status']}")
-    else:
-        st.write("No login attempts recorded.")
+#     if login_history:
+#         for record in login_history:
+#             st.write(f"Username: {record['username']}, Status: {record['status']}")
+#     else:
+#         st.write("No login attempts recorded.")
  
 #st.title("Home Page")
 #login_form()
